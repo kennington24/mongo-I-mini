@@ -1,27 +1,27 @@
 const router = require('express').Router();
 
-const Bear = require('./bearModel');
+const User = require('./userModel.js');
 
-// /api/bears
+// /api/Users
 router
   .route('/')
   .get((req, res) => {
-    Bear.find({})
-      .then(bears => {
-        res.status(200).json(bears);
+    User.find({})
+      .then(users => {
+        res.status(200).json(users);
       })
       .catch(err => {
         res.status(500).json(err);
       });
   })
   .post((req, res) => {
-    const bear = new Bear(req.body);
+    const user = new User(req.body);
 
-    bear
+    user
       .save()
-      .then(savedBear => {
-        // change the saved bear
-        res.status(201).json(savedBear);
+      .then(savedUser => {
+        // change the saved User
+        res.status(201).json(savedUser);
       })
       .catch(err => res.status(500).json(err));
   });
@@ -29,9 +29,10 @@ router
 router
   .route('/:id')
   .get((req, res) => {
-    Bear.findById(req.params.id)
-      .then(bears => {
-        res.status(200).json(bears);
+    User.findById(req.params.id)
+      .populate('roles', { name: 1, _id: 0 })
+      .then(user => {
+        res.status(200).json(user);
       })
       .catch(err => {
         res.status(500).json(err);
@@ -39,7 +40,7 @@ router
   })
   .delete((req, res) => {
     const { id } = req.params;
-    Bear.findByIdAndRemove(id)
+    User.findByIdAndRemove(id)
       .then(response => {
         if (response === null) {
           res.status(404).json({ message: 'not found' });
@@ -55,14 +56,14 @@ router
         } else {
           res
             .status(500)
-            .json({ errorMessage: 'The friend could not be removed', err });
+            .json({ errorMessage: 'The user could not be removed', err });
         }
       });
   })
   .put((req, res) => {
     // const changes = { ...req.body, updatedOn:new Date() }
 
-    Bear.findByIdAndUpdate(req.params.id, req.body)
+    User.findByIdAndUpdate(req.params.id, req.body)
       .then(response => {
         if (response === null) {
           res.status(404).json({ message: 'not found' });
@@ -78,7 +79,7 @@ router
         } else {
           res
             .status(500)
-            .json({ errorMessage: 'The friend could not be removed', err });
+            .json({ errorMessage: 'The user could not be removed', err });
         }
       });
   });

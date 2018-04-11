@@ -4,11 +4,12 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 
 mongoose
-  .connect('mongodb://localhost/bearDB')
-  .then(console.log('\n=== connected to mongo ===\n'))
-  .catch(err => console.log('error connecting to mongo database'));
+  .connect('mongodb://localhost/beardb')
+  .then(() => console.log('\n=== connected to mongo ===\n'))
+  .catch(err => console.log('error connecting to mongo'));
 
 const bearController = require('./bears/bearController');
+const userController = require('./users/userController');
 
 const server = express();
 
@@ -21,6 +22,7 @@ server.get('/', function(req, res) {
 });
 
 server.use('/api/bears', bearController);
+server.use('/api/users', userController);
 
 const port = process.env.PORT || 5000;
 server.listen(port, () => {
